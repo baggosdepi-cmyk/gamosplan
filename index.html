@@ -654,4 +654,118 @@
     showMessage("Lead demo καταχωρήθηκε για " + selectedVenue + ". Επικοινωνία: " + name + " · " + phone + " · " + email + ". Τώρα εσύ θα έπαιρνες τηλέφωνο τον χώρο για πραγματική προσφορά.");
   }
 
-  updatePlan();updateProgress();</script></body></html>
+  updatePlan();updateProgress();</script><section id="wedding-calendar" style="max-width:1100px;margin:40px auto;padding:24px;border-radius:28px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);backdrop-filter:blur(14px);color:white;">
+  <h2 style="font-size:34px;margin-bottom:8px;">Ημερολόγιο Γάμου</h2>
+  <p style="opacity:.85;margin-bottom:22px;">Οργάνωσε όλα τα σημαντικά ραντεβού του γάμου σου σε ένα μέρος.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:18px;">
+    <input id="eventTitle" placeholder="Τίτλος ραντεβού" style="padding:14px;border-radius:16px;border:0;">
+    <input id="eventDate" type="date" style="padding:14px;border-radius:16px;border:0;">
+    <input id="eventTime" type="time" style="padding:14px;border-radius:16px;border:0;">
+    <input id="eventCategory" placeholder="Κατηγορία π.χ. Φωτογράφος" style="padding:14px;border-radius:16px;border:0;">
+  </div>
+
+  <textarea id="eventNotes" placeholder="Σημειώσεις" style="width:100%;min-height:90px;padding:14px;border-radius:16px;border:0;margin-bottom:14px;"></textarea>
+
+  <button onclick="addWeddingEvent()" style="padding:14px 24px;border-radius:999px;border:0;background:#d8aa45;font-weight:800;cursor:pointer;">
+    + Νέο Ραντεβού
+  </button>
+
+  <div id="eventsList" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:24px;"></div>
+</section>
+
+<script>
+  const defaultWeddingEvents = [
+    {
+      title: "Δοκιμή νυφικού",
+      date: "2026-06-25",
+      time: "12:30",
+      category: "Νυφικό",
+      notes: "Να πάρω μαζί παπούτσια και αξεσουάρ."
+    },
+    {
+      title: "Ραντεβού με φωτογράφο",
+      date: "2026-06-28",
+      time: "18:00",
+      category: "Φωτογράφος",
+      notes: "Να ρωτήσουμε για βίντεο και drone."
+    },
+    {
+      title: "Χώρος δεξίωσης",
+      date: "2026-07-02",
+      time: "19:00",
+      category: "Δεξίωση",
+      notes: "Να ρωτήσουμε τιμή ανά άτομο και προκαταβολή."
+    },
+    {
+      title: "Ανθοπωλείο",
+      date: "2026-07-06",
+      time: "11:00",
+      category: "Λουλούδια",
+      notes: "Ιδέες για ανθοδέσμη και στολισμό εκκλησίας."
+    }
+  ];
+
+  let weddingEvents = JSON.parse(localStorage.getItem("weddingEvents")) || defaultWeddingEvents;
+
+  function saveWeddingEvents() {
+    localStorage.setItem("weddingEvents", JSON.stringify(weddingEvents));
+  }
+
+  function renderWeddingEvents() {
+    const list = document.getElementById("eventsList");
+    list.innerHTML = "";
+
+    weddingEvents.forEach((event, index) => {
+      const card = document.createElement("div");
+      card.style.padding = "18px";
+      card.style.borderRadius = "22px";
+      card.style.background = "rgba(255,255,255,0.16)";
+      card.style.border = "1px solid rgba(255,255,255,0.25)";
+
+      card.innerHTML = `
+        <h3 style="margin:0 0 8px;font-size:20px;">${event.title}</h3>
+        <p style="margin:4px 0;opacity:.9;"><b>Ημερομηνία:</b> ${event.date}</p>
+        <p style="margin:4px 0;opacity:.9;"><b>Ώρα:</b> ${event.time}</p>
+        <p style="margin:4px 0;opacity:.9;"><b>Κατηγορία:</b> ${event.category}</p>
+        <p style="margin:10px 0;opacity:.85;">${event.notes}</p>
+        <button onclick="deleteWeddingEvent(${index})" style="margin-top:8px;padding:10px 14px;border-radius:999px;border:0;background:rgba(255,255,255,.85);cursor:pointer;">
+          Διαγραφή
+        </button>
+      `;
+
+      list.appendChild(card);
+    });
+  }
+
+  function addWeddingEvent() {
+    const title = document.getElementById("eventTitle").value;
+    const date = document.getElementById("eventDate").value;
+    const time = document.getElementById("eventTime").value;
+    const category = document.getElementById("eventCategory").value;
+    const notes = document.getElementById("eventNotes").value;
+
+    if (!title || !date || !time) {
+      alert("Βάλε τουλάχιστον τίτλο, ημερομηνία και ώρα.");
+      return;
+    }
+
+    weddingEvents.push({ title, date, time, category, notes });
+    saveWeddingEvents();
+    renderWeddingEvents();
+
+    document.getElementById("eventTitle").value = "";
+    document.getElementById("eventDate").value = "";
+    document.getElementById("eventTime").value = "";
+    document.getElementById("eventCategory").value = "";
+    document.getElementById("eventNotes").value = "";
+  }
+
+  function deleteWeddingEvent(index) {
+    weddingEvents.splice(index, 1);
+    saveWeddingEvents();
+    renderWeddingEvents();
+  }
+
+  renderWeddingEvents();
+</script></body></html>
